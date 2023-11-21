@@ -101,7 +101,7 @@ export function UpgradePage() {
           <div className="flex flex-wrap gap-4">
             <div
               className={`card w-96 bg-base-100 shadow-xl m-2 ${
-                data.organization.plan === "basic" ? "opacity-50" : ""
+                data.organization.plan === "standard" ? "opacity-50" : ""
               }`}
             >
               <div className="card-body">
@@ -111,12 +111,12 @@ export function UpgradePage() {
                   <Link
                     to={`/cart`}
                     className={`btn btn-neutral ${
-                      data.organization.plan === "basic"
+                      data.organization.plan === "standard"
                         ? "opacity-50 cursor-not-allowed"
                         : ""
                     }`}
                     onClick={
-                      data.organization.plan === "basic"
+                      data.organization.plan === "standard"
                         ? (e) => e.preventDefault()
                         : undefined
                     }
