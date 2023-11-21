@@ -207,10 +207,26 @@ app.post("/auth/organizations/:id/upgrade", async (c) => {
       )
       .get();
 
+    //checking if user is admin
     if (!admin)
       return c.json({ error: "you arent part of this organization" }, 403);
     if (admin.role !== "admin")
       return c.json({ error: "youre not admin" }, 403);
+
+    // Check for an existing transaction for this organization
+    const existingTransactions = await db
+      .select()
+      .from(transactions_table)
+      .where(eq(transactions_table.organization_id, id))
+      .all();
+
+    // Iterate over the transactions and delete each one
+    for (const transaction of existingTransactions) {
+      await db
+        .delete(transactions_table)
+        .where(eq(transactions_table.id, transaction.id))
+        .execute();
+    }
 
     const org = await db
       .select()
@@ -233,8 +249,6 @@ app.post("/auth/organizations/:id/upgrade", async (c) => {
         amount: plan === "plus" ? 3999 : 4999,
         organization_id: id,
       });
-      // gateway
-      // if(paid) change
     }
 
     return c.json({ success: true });

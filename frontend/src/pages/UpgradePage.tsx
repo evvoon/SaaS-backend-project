@@ -67,7 +67,6 @@ export function UpgradePage() {
       .then((data) => {
         setUpgradeLoading(false);
         setUpgradeResult(data);
-        console.log("hello2");
       });
   }
 
@@ -108,8 +107,7 @@ export function UpgradePage() {
                 <h2 className="card-title">Standard</h2>
                 <p>INR 4999 Per Year, Per User, up to 5 users</p>
                 <div className="card-actions justify-end">
-                  <Link
-                    to={`/cart`}
+                  <button
                     className={`btn btn-neutral ${
                       data.organization.plan === "standard"
                         ? "opacity-50 cursor-not-allowed"
@@ -118,24 +116,24 @@ export function UpgradePage() {
                     onClick={
                       data.organization.plan === "standard"
                         ? (e) => e.preventDefault()
-                        : undefined
+                        : () => addToCart("standard")
                     }
                   >
                     Choose Standard
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
             <div className="card w-96 bg-base-100 shadow-xl m-2">
               <div className="card-body">
-                <h2 className="card-title">Premium</h2>
+                <h2 className="card-title">Plus</h2>
                 <p>INR 3999 Per Year, Per User above 10 users</p>
                 <div className="card-actions justify-end">
                   <button
                     onClick={() => addToCart("plus")}
                     className="btn btn-neutral"
                   >
-                    Choose Premium
+                    Choose Plus
                   </button>
                 </div>
               </div>
