@@ -64,7 +64,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/organizations/cart",
+    path: "/organizations/create",
     element: (
       <main>
         <NewOrgs />

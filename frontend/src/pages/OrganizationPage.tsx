@@ -47,7 +47,7 @@ export function OrganizationPage() {
       {isLoading && <span className="loading loading-ring loading-lg"></span>}
       {!isLoading && (
         <div className="overflow-x-auto">
-          {data && <div>{data.organization.name}</div>}
+          {data && <h1>{data.organization.name}</h1>}
           {data?.isAdmin && data.organization.plan !== "plus" && (
             <Link to={`/organizations/${id}/upgrade`} className="btn btn-sm">
               Upgrade Plan

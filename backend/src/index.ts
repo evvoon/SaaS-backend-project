@@ -105,6 +105,7 @@ app.get("/auth/organizations", async (c) => {
           eq(organizations_table.id, organizations_users_table.organization_id)
         )
         .where(eq(organizations_users_table.user_id, userId))
+        .groupBy(organizations_table.id)
         .all()
     ).filter((x) => x.num_members);
     console.log(results);
@@ -141,7 +142,8 @@ app.get("/auth/organizations/:id", async (c) => {
       )
       .get();
 
-    if (!org) return c.json({ error: "ur an imposter" }, 500);
+    if (!org)
+      return c.json({ error: "you are not part of this organization" }, 500);
 
     const members = await db
       .select({

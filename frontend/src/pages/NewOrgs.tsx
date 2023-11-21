@@ -1,83 +1,49 @@
-// to create new organization
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { FormEvent, useState } from "react";
 import { API } from "../api";
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+import { Navigate } from "react-router-dom";
 
 export function NewOrgs() {
-  const [data, setData] = useState<{
-    organization: {
-      id: string;
-      name: string;
-      plan: "basic" | "standard" | "plus";
-      role: "admin" | "member";
-      num_members: number;
-    };
-    members: {
-      id: string;
-      name: string;
-      email: string;
-      role: "admin" | "member";
-    }[];
-    isAdmin: boolean;
-  }>();
-  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
 
-  const { id } = useParams();
+  const [redirect, setRedirect] = useState(false);
 
-  useEffect(() => {
-    setIsLoading(true);
+  async function handleSubmit(ev: FormEvent<HTMLFormElement>) {
+    ev.preventDefault();
 
-    Promise.all([
-      fetch(API.organizations(id), { credentials: "include" }),
-      sleep(440),
-    ])
-      .then(([r]) => r.json())
-      .then((data) => {
-        setIsLoading(false);
-        setData(data);
-      });
-  }, []);
+    const response = await fetch(API.create(), {
+      method: "POST",
+      body: JSON.stringify({ name }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
 
-  useEffect(() => console.log(data), [data]);
+    if (response.ok) {
+      setRedirect(true);
+    } else {
+      alert("error creating organization");
+    }
+  }
+
+  if (redirect) {
+    return <Navigate to={"/organizations"} />;
+  }
 
   return (
-    <>
-      {isLoading && <span className="loading loading-ring loading-lg"></span>}
-      {!isLoading && (
-        <div className="overflow-x-auto">
-          {data && <div>{data.organization.name}</div>}
-          {data?.isAdmin && data.organization.plan !== "plus" && (
-            <Link to={`/organizations/${id}/upgrade`} className="btn btn-sm">
-              Upgrade Plan
-            </Link>
-          )}
-          {data?.members.length ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {data.members.map(({ id, email, name, role }) => (
-                  <tr key={id}>
-                    <td>{name}</td>
-                    <td>{email}</td>
-                    <td>{role}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            "No members yet"
-          )}
-        </div>
-      )}
-    </>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-4">Create New Organization</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter organization name"
+          required
+          className="input input-bordered w-full max-w-xs"
+        />
+        <button type="submit" className="btn btn-primary max-w-xs">
+          Create Organization
+        </button>
+      </form>
+    </div>
   );
 }
